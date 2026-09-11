@@ -29,7 +29,10 @@ async function walk(directory) {
 
 function resolveAssetPath(reference) {
 	const clean = reference.split(/[?#]/, 1)[0].replace(/^["']|["']$/g, "");
-	const relative = clean.replace(/^\.?\/?_astro\//, "_astro/");
+	// Strip everything before (and including) the first `_astro/` segment so
+	// sub-path deployments (base != "/") don't leak the base prefix into the
+	// resolved disk path.
+	const relative = clean.replace(/^.*?\/?_astro\//, "_astro/");
 	return join(dist, ...relative.split("/"));
 }
 
